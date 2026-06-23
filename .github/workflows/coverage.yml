@@ -9,6 +9,7 @@ jobs:
     uses: OpenVoiceOS/gh-automations/.github/workflows/coverage.yml@dev
     with:
       pre_install_pip: "git+https://github.com/OpenVoiceOS/ovos-plugin-manager@feat/media-provider-plugin-type"
+      python_version: "3.12"
       test_extras: "test"
       test_path: "test/"
     secrets: inherit

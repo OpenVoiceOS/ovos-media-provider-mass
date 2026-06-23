@@ -9,6 +9,7 @@ jobs:
     uses: OpenVoiceOS/gh-automations/.github/workflows/build-tests.yml@dev
     with:
       pre_install_pip: "git+https://github.com/OpenVoiceOS/ovos-plugin-manager@feat/media-provider-plugin-type"
+      python_versions: '["3.12", "3.13", "3.14"]'
       install_extras: "test"
       test_path: "test/"
     secrets: inherit
