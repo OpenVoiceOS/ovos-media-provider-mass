@@ -1,0 +1,93 @@
+{
+  "tracks": [
+    {
+      "media_type": "track",
+      "name": "Worms",
+      "uri": "library://track/9903",
+      "is_playable": true,
+      "favorite": true,
+      "duration": 208,
+      "artists": [{"name": "Viagra Boys"}],
+      "album": {"name": "Street Worms"},
+      "image": {"path": "https://art.example/worms.jpg", "remotely_accessible": true},
+      "external_ids": {"musicbrainz": "mbid-worms-123"}
+    },
+    {
+      "media_type": "track",
+      "name": "Food for the Worms",
+      "uri": "library://track/2560",
+      "is_playable": true,
+      "favorite": false,
+      "duration": 383,
+      "artists": [{"name": "Exodus"}],
+      "album": {"name": "Tempo of the Damned"},
+      "metadata": {"images": [{"path": "https://art.example/exodus.jpg", "remotely_accessible": true}]}
+    },
+    {
+      "media_type": "track",
+      "name": "Local Only Art",
+      "uri": "library://track/0001",
+      "is_playable": true,
+      "favorite": false,
+      "duration": 100,
+      "artists": [],
+      "album": null,
+      "image": {"path": "/local/only.jpg", "remotely_accessible": false}
+    }
+  ],
+  "albums": [
+    {
+      "media_type": "album",
+      "name": "Street Worms",
+      "uri": "library://album/1303",
+      "is_playable": true,
+      "favorite": false,
+      "artists": [{"name": "Viagra Boys"}],
+      "image": {"path": "https://art.example/streetworms.jpg", "remotely_accessible": true}
+    }
+  ],
+  "artists": [
+    {
+      "media_type": "artist",
+      "name": "Viagra Boys",
+      "uri": "library://artist/77",
+      "is_playable": true,
+      "favorite": false
+    },
+    {
+      "media_type": "artist",
+      "name": "Not Playable Artist",
+      "uri": "library://artist/88",
+      "is_playable": false
+    }
+  ],
+  "playlists": [],
+  "radio": [
+    {
+      "media_type": "radio",
+      "name": "Worm Radio",
+      "uri": "library://radio/42",
+      "is_playable": true,
+      "favorite": false
+    }
+  ],
+  "podcasts": [
+    {
+      "media_type": "podcast",
+      "name": "The Worm Cast",
+      "uri": "library://podcast/7",
+      "is_playable": true,
+      "favorite": false
+    }
+  ],
+  "audiobooks": [
+    {
+      "media_type": "audiobook",
+      "name": "How to Train Your Worm",
+      "uri": "library://audiobook/3",
+      "is_playable": true,
+      "favorite": false,
+      "duration": 36000
+    }
+  ]
+}

@@ -1,0 +1,43 @@
+[build-system]
+requires = ["setuptools>=42", "wheel"]
+build-backend = "setuptools.build_meta"
+
+[project]
+name = "ovos-media-provider-mass"
+dynamic = ["version"]
+description = "OVOS MediaProvider plugin for Music Assistant (replaces ovos-skill-music-assistant)"
+readme = "README.md"
+license = { text = "Apache-2.0" }
+authors = [{ name = "JarbasAI", email = "jarbasai@mailfence.com" }]
+requires-python = ">=3.10"
+keywords = ["ovos", "OpenVoiceOS", "OCP", "media", "music", "music-assistant", "MediaProvider"]
+classifiers = [
+    "Development Status :: 3 - Alpha",
+    "Intended Audience :: Developers",
+    "License :: OSI Approved :: Apache Software License",
+    "Programming Language :: Python :: 3.10",
+    "Programming Language :: Python :: 3.11",
+    "Programming Language :: Python :: 3.12",
+    "Programming Language :: Python :: 3.13",
+]
+dependencies = [
+    "mediavocab>=1.0.0",
+    "ovos-plugin-manager>=2.1.0,<3.0.0",
+    "py-music-assistant>=0.0.1",
+]
+
+[project.optional-dependencies]
+test = ["pytest", "pytest-cov"]
+
+[project.urls]
+Homepage = "https://github.com/OpenVoiceOS/ovos-media-provider-mass"
+Source = "https://github.com/OpenVoiceOS/ovos-media-provider-mass"
+
+[project.entry-points."opm.media.provider"]
+music_assistant = "ovos_media_provider_mass:MAssMediaProvider"
+
+[tool.setuptools]
+packages = ["ovos_media_provider_mass"]
+
+[tool.setuptools.dynamic]
+version = { attr = "ovos_media_provider_mass.version.__version__" }
