@@ -26,6 +26,14 @@ It supersedes the catalog/search half of the legacy OCP skill
 pip install ovos-media-provider-mass
 ```
 
+> **Note (ovos-media sprint):** the `opm.media.provider` plugin type lives in
+> `ovos-plugin-manager`'s `feat/media-provider-plugin-type` branch and is not on
+> PyPI yet, so until it ships you need:
+> ```bash
+> pip install git+https://github.com/OpenVoiceOS/ovos-plugin-manager@feat/media-provider-plugin-type
+> ```
+> CI installs it the same way; `opm-check` is wired back once that support is released.
+
 ## Configure
 
 Per-provider settings live under `media_providers` in `mycroft.conf`, keyed by
