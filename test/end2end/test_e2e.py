@@ -13,10 +13,10 @@
 # limitations under the License.
 """End-to-end test for the Music Assistant MediaProvider.
 
-Uses ovoscope's ``MediaProviderHarness``, which discovers the provider through its
-real ``opm.media.provider`` entry-point and drives the path the OCP pipeline takes
-— discover -> ``serves()`` context gate -> ``search_safe`` — with the Music
-Assistant client mocked.
+Uses ovoscope's ``MediaProviderHarness`` to discover the provider through its
+real ``opm.media.provider`` entry-point (the packaging signal the OCP pipeline
+relies on) and then drives the simplified contract — a single ``search()`` call
+— with the Music Assistant client mocked.
 """
 import json
 import unittest
@@ -24,8 +24,7 @@ from os.path import dirname, join
 from unittest.mock import MagicMock
 
 from mediavocab import MediaType, Release, Signals
-from mediavocab.taxonomy import PlaybackType
-from ovos_plugin_manager.templates.media_provider import MediaProvider, QueryContext
+from ovos_plugin_manager.templates.media_provider import MediaProvider
 
 from ovoscope import MediaProviderHarness
 
@@ -38,19 +37,14 @@ def _search_fixture() -> dict:
         return json.load(f)
 
 
-def _mock_api(recently=None) -> MagicMock:
+def _mock_api() -> MagicMock:
     api = MagicMock()
     api.search_media.return_value = _search_fixture()
-    api.get_players.return_value = []
-    api.recently_played.return_value = recently or [{
-        "media_type": "track", "name": "Recent Hit", "uri": "library://track/55",
-        "is_playable": True, "artists": [{"name": "Someone"}],
-    }]
     return api
 
 
 class TestMAssProviderEndToEnd(unittest.TestCase):
-    """Drive the provider via MediaProviderHarness (discover -> gate -> search)."""
+    """Discover the provider via its entry-point and drive ``search()``."""
 
     def setUp(self):
         self.api = _mock_api()
@@ -67,54 +61,31 @@ class TestMAssProviderEndToEnd(unittest.TestCase):
         self.h.assert_entrypoint_registered()
         self.assertIsInstance(self.provider, MediaProvider)
         self.assertEqual(self.provider.name, PROVIDER_NAME)
-        self.assertEqual(self.provider.playback_type, {PlaybackType.AUDIO})
         self.assertEqual(
-            self.provider.media,
+            self.provider.SERVED_MEDIA,
             {MediaType.MUSIC, MediaType.RADIO, MediaType.PODCAST, MediaType.AUDIOBOOK},
         )
 
-    def test_is_available_pings_server(self):
-        self.assertTrue(self.h.is_available())
-        self.api.get_players.assert_called_once()
+    # -- the search path the pipeline calls --------------------------------
 
-    # -- routing / context gate -------------------------------------------
-
-    def test_serves_on_audio_device(self):
-        self.h.assert_routes(Signals(medium=MediaType.MUSIC),
-                             QueryContext(supported_playback_types={"audio"}))
-
-    def test_not_served_on_video_only_device(self):
-        self.h.assert_not_routes(Signals(medium=MediaType.MUSIC),
-                                 QueryContext(supported_playback_types={"video"}))
-
-    def test_not_served_for_unsupported_medium(self):
-        self.h.assert_not_routes(Signals(medium=MediaType.MOVIE))
-
-    # -- the full search path the pipeline calls ---------------------------
-
-    def test_search_safe_returns_scored_playables(self):
-        results = self.h.assert_returns_playables(Signals(title="worms"))
+    def test_search_returns_scored_playables(self):
+        results = self.h.search(Signals(title="worms"))
         self.api.search_media.assert_called_once_with("worms", limit=10)
+        self.assertTrue(results and all(isinstance(r, Release) for r in results))
+        self.assertTrue(all(0.0 <= r.match_confidence <= 1.0 for r in results))
         # exact title outranks the partial match -> ranking is meaningful
         by_title = {r.work.title: r.match_confidence for r in results}
         self.assertGreater(by_title["Worms"], by_title["Food for the Worms"])
         self.assertTrue(all(r.uri.startswith("library://") for r in results))
-        self.assertTrue(all(isinstance(r, Release) for r in results))
 
-    def test_search_safe_swallows_backend_error(self):
+    def test_search_swallows_backend_error(self):
         self.api.search_media.side_effect = RuntimeError("server exploded")
-        self.assertEqual(self.h.search_safe(Signals(title="worms")), [])
+        self.assertEqual(self.h.search(Signals(title="worms")), [])
 
     def test_search_narrows_to_requested_medium(self):
-        radio = self.h.search_safe(Signals(title="worms", medium=MediaType.RADIO))
+        radio = self.h.search(Signals(title="worms", medium=MediaType.RADIO))
         self.assertTrue(radio)
         self.assertTrue(all(r.work.media_type == MediaType.RADIO for r in radio))
-
-    # -- featured / home content ------------------------------------------
-
-    def test_featured_media_from_recently_played(self):
-        feats = self.h.featured_media()
-        self.assertEqual([r.work.title for r in feats], ["Recent Hit"])
 
 
 if __name__ == "__main__":

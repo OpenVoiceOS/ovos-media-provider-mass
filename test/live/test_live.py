@@ -24,10 +24,6 @@ def provider():
     return MAssMediaProvider({"url": MASS_SERVER_URL, "max_results": 5})
 
 
-def test_is_available(provider):
-    assert provider.is_available() is True
-
-
 def test_live_search(provider):
     results = provider.search(Signals(title="the beatles", medium=MediaType.MUSIC))
     assert all(isinstance(r, Release) for r in results)

@@ -4,7 +4,6 @@ from os.path import dirname, join
 from unittest.mock import MagicMock
 
 from mediavocab import MediaType, Release, Signals
-from mediavocab.taxonomy import PlaybackType
 
 from ovos_media_provider_mass import MAssMediaProvider, score_release
 
@@ -16,53 +15,25 @@ def _search_fixture():
         return json.load(f)
 
 
-def _provider_with_mock(search_return=None, recently=None):
+def _provider_with_mock(search_return=None):
     prov = MAssMediaProvider({"url": "http://mass.local:8095"})
     api = MagicMock()
     api.search_media.return_value = search_return if search_return is not None else _search_fixture()
-    api.recently_played.return_value = recently if recently is not None else []
     prov._api = api
     return prov, api
 
 
-def test_instantiation_and_routing():
+def test_instantiation():
     assert MAssMediaProvider.name == "music_assistant"
-    assert MAssMediaProvider.media == {
+    assert MAssMediaProvider.SERVED_MEDIA == {
         MediaType.MUSIC, MediaType.RADIO, MediaType.PODCAST, MediaType.AUDIOBOOK
     }
-    assert MAssMediaProvider.playback_type == {PlaybackType.AUDIO}
 
 
-def test_matches_served_types_true():
-    prov = MAssMediaProvider()
-    assert prov.matches(Signals(medium=MediaType.MUSIC)) is True
-    assert prov.matches(Signals(medium=MediaType.RADIO)) is True
-    assert prov.matches(Signals(medium=MediaType.PODCAST)) is True
-    assert prov.matches(Signals(medium=MediaType.AUDIOBOOK)) is True
-
-
-def test_matches_unserved_type_false():
-    prov = MAssMediaProvider()
-    assert prov.matches(Signals(medium=MediaType.MOVIE)) is False
-
-
-def test_is_available_false_without_url():
+def test_search_without_url_returns_empty():
     prov = MAssMediaProvider()
     assert prov.api is None
-    assert prov.is_available() is False
-
-
-def test_is_available_true_when_server_answers():
-    prov, api = _provider_with_mock()
-    api.get_players.return_value = []
-    assert prov.is_available() is True
-    api.get_players.assert_called_once()
-
-
-def test_is_available_false_when_server_errors():
-    prov, api = _provider_with_mock()
-    api.get_players.side_effect = RuntimeError("connection refused")
-    assert prov.is_available() is False
+    assert prov.search(Signals(title="worms")) == []
 
 
 def test_search_empty_query_returns_empty():
@@ -108,16 +79,6 @@ def test_search_swallows_backend_error():
     prov, api = _provider_with_mock()
     api.search_media.side_effect = RuntimeError("boom")
     assert prov.search(Signals(title="x")) == []
-
-
-def test_featured_media_maps_recently_played():
-    recent = [{
-        "media_type": "track", "name": "Recent Hit", "uri": "library://track/55",
-        "is_playable": True, "artists": [{"name": "Someone"}],
-    }]
-    prov, _ = _provider_with_mock(recently=recent)
-    feats = prov.featured_media()
-    assert [r.work.title for r in feats] == ["Recent Hit"]
 
 
 def test_score_release_favorite_and_artist_bonus():
