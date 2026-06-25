@@ -25,7 +25,9 @@ dependencies = [
 ]
 
 [project.optional-dependencies]
-test = ["pytest", "pytest-cov"]
+# ovoscope>=0.21.0a1 brings MediaProviderHarness; CI installs it from git (see the
+# pre_install_pip note in the workflows) until that alpha publishes to PyPI.
+test = ["pytest", "pytest-cov", "ovoscope>=0.21.0a1"]
 
 [project.urls]
 Homepage = "https://github.com/OpenVoiceOS/ovos-media-provider-mass"
