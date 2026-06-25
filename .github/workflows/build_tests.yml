@@ -8,10 +8,9 @@ jobs:
   build_tests:
     uses: OpenVoiceOS/gh-automations/.github/workflows/build-tests.yml@dev
     with:
-      # opm media_provider type is branch-only; ovoscope's MediaProviderHarness is
-      # on dev but not yet on PyPI (alpha publish is currently broken), so both are
-      # installed from git until they ship.
-      pre_install_pip: "git+https://github.com/OpenVoiceOS/ovos-plugin-manager@feat/media-provider-plugin-type git+https://github.com/OpenVoiceOS/ovoscope@dev"
+      # opm media_provider type is still branch-only (not on PyPI), so install it
+      # from git; ovoscope (MediaProviderHarness) now installs from PyPI via [test].
+      pre_install_pip: "git+https://github.com/OpenVoiceOS/ovos-plugin-manager@feat/media-provider-plugin-type"
       python_versions: '["3.12", "3.13", "3.14"]'
       install_extras: "test"
       test_path: "test/"
