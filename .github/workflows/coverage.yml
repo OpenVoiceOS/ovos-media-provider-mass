@@ -10,7 +10,7 @@ jobs:
     with:
       # opm media_provider type is still branch-only (not on PyPI), so install it
       # from git; ovoscope (MediaProviderHarness) now installs from PyPI via [test].
-      pre_install_pip: "git+https://github.com/OpenVoiceOS/ovos-plugin-manager@feat/media-provider-plugin-type"
+      pre_install_pip: "git+https://github.com/OpenVoiceOS/ovos-plugin-manager@dev"
       python_version: "3.12"
       test_extras: "test"
       test_path: "test/"
