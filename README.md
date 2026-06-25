@@ -53,6 +53,12 @@ the provider's entry-point name:
 `url` is required (the provider reports itself unavailable without it). Set
 `"enabled": false` to disable without uninstalling.
 
+## Related projects
+
+- [py-music-assistant](https://github.com/TigreGotico/py-music-assistant) — shared HTTP client + mediavocab bridge (this provider's transport layer)
+- [ovos-media-plugin-mass](https://github.com/OpenVoiceOS/ovos-media-plugin-mass) — Music Assistant playback backend (plays the `library://` uris this provider returns)
+- [ovos-skill-music-assistant](https://github.com/OpenVoiceOS/ovos-skill-music-assistant) — the legacy OCP search skill this provider supersedes
+
 ## Docs
 
 - [docs/index.md](docs/index.md) — overview & how it fits the ovos-media stack
@@ -62,9 +68,14 @@ the provider's entry-point name:
 
 ```bash
 pip install -e .[test]
-pytest test/                                            # network-free
+pytest test/                                            # unit + end2end, network-free
 MASS_SERVER_URL=http://<host>:8095 pytest test/live/    # opt-in, real server
 ```
+
+The end-to-end tests ([test/end2end/](test/end2end/)) discover the provider
+through its real `opm.media.provider` entry-point and drive the full
+discover → `serves()` gate → `search_safe` path the OCP pipeline takes, with the
+Music Assistant client mocked.
 
 ## License
 
