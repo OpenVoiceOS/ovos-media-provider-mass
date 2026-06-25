@@ -12,3 +12,11 @@ jobs:
   license_tests:
     uses: OpenVoiceOS/gh-automations/.github/workflows/license-check.yml@dev
     secrets: inherit
+    with:
+      # orjson (transitive via the Music-Assistant client stack) is triple-licensed
+      # MPL-2.0 AND (Apache-2.0 OR MIT). pilosus categorizes the combined string as
+      # WeakCopyleft, but it is permissive via the Apache-2.0/MIT option and the MPL
+      # part is file-level copyleft (allowed by policy, used as an unmodified library).
+      # Anchored, version-tolerant pattern (pilosus matches the full "name==version"
+      # string, so a bare ^orjson$ never matches) — same style as the tqdm whitelist.
+      exclude_packages: "(?i:^orjson([=<>!~ @;].*)?$)"

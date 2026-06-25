@@ -2,12 +2,13 @@
 
 Replaces the catalog/search half of the deprecated OCP skill
 ``ovos-skill-music-assistant``. Instead of answering ``ovos.common_play.query``
-over the bus, this provider is loaded in-process by the OCP pipeline, gated by
-the three-axis routing test, and its :meth:`search` is called directly.
+over the bus, this provider is loaded in-process by the OCP pipeline and its
+:meth:`search` is called directly. Any request it cannot satisfy (no query, no
+server configured, the server offline) yields an empty list.
 
 All Music Assistant access is delegated to the ``py-music-assistant`` client and
-its mediavocab bridge (``search_to_releases`` / ``recently_played_to_releases``),
-which yield ``mediavocab.Release`` objects. Each ``Release.uri`` is a
+its mediavocab bridge (``search_to_releases``), which yields
+``mediavocab.Release`` objects. Each ``Release.uri`` is a
 ``library://<type>/<id>`` identifier that the companion
 ``ovos-media-plugin-mass`` audio backend resolves and plays.
 """
@@ -17,12 +18,10 @@ from ovos_utils.log import LOG
 from ovos_utils.parse import fuzzy_match
 
 from mediavocab import MediaType, Release, Signals
-from mediavocab.taxonomy import PlaybackType
 from ovos_plugin_manager.templates.media_provider import MediaProvider
 
 from py_music_assistant import (
     SimpleHTTPMusicAssistantClient,
-    recently_played_to_releases,
     search_to_releases,
 )
 
@@ -54,25 +53,20 @@ def score_release(release: Release, signals: Signals) -> float:
 class MAssMediaProvider(MediaProvider):
     """Search a Music Assistant server and return ``mediavocab.Release`` playables.
 
-    Routing (three-axis gate):
-
-    * ``media`` — ``MUSIC``, ``RADIO``, ``PODCAST``, ``AUDIOBOOK`` (the library
-      types Music Assistant indexes).
-    * ``playback_type`` — ``AUDIO`` only (everything Music Assistant serves is
-      consumed as an audio stream).
-    * ``genre_filter`` — empty (no genre gate).
+    Serves the audio library types Music Assistant indexes — ``MUSIC``,
+    ``RADIO``, ``PODCAST``, ``AUDIOBOOK`` — all consumed as audio streams.
     """
 
     name: ClassVar[str] = "music_assistant"
 
-    media: ClassVar[Set[MediaType]] = {
+    #: library media types this provider can satisfy; a request for any other
+    #: medium narrows to nothing and ``search`` returns ``[]``.
+    SERVED_MEDIA: ClassVar[Set[MediaType]] = {
         MediaType.MUSIC,
         MediaType.RADIO,
         MediaType.PODCAST,
         MediaType.AUDIOBOOK,
     }
-
-    playback_type: ClassVar[Set[PlaybackType]] = {PlaybackType.AUDIO}
 
     def __init__(self, config: Optional[dict] = None):
         super().__init__(config)
@@ -89,30 +83,18 @@ class MAssMediaProvider(MediaProvider):
             self._api = SimpleHTTPMusicAssistantClient(self.url)
         return self._api
 
-    def is_available(self) -> bool:
-        """True when a server url is configured and the server answers.
-
-        A cheap ``players/all`` round-trip doubles as a reachability probe so an
-        unconfigured or offline server is skipped at load instead of failing
-        every search.
-        """
-        if self.api is None:
-            LOG.debug("Music Assistant provider has no 'url' configured")
-            return False
-        try:
-            self.api.get_players()
-            return True
-        except Exception:
-            LOG.exception(f"Music Assistant server not reachable at {self.url}")
-            return False
-
-    def search(self, signals: Signals, lang: str = "en-us") -> List[Release]:
+    def search(self, signals: Signals, lang: str = "en-us", *,
+               supported_playback_types: Optional[Set[str]] = None,
+               blocked_genres: Optional[Set[str]] = None,
+               region: Optional[str] = None,
+               session_id: Optional[str] = None) -> List[Release]:
         """Search Music Assistant for ``signals.title`` and return scored Releases.
 
         When ``signals.medium`` names a specific type this provider serves, the
         results are narrowed to that type; otherwise all playable results are
         returned. Each result's ``match_confidence`` is set by
-        :func:`score_release`.
+        :func:`score_release`. Returns ``[]`` when there is no query, no server
+        configured, or the server is unreachable.
         """
         query = (signals.title or "").strip()
         if not query or self.api is None:
@@ -125,7 +107,7 @@ class MAssMediaProvider(MediaProvider):
             return []
 
         medium = signals.medium
-        narrow = medium in self.media  # a specific type we serve was requested
+        narrow = medium in self.SERVED_MEDIA  # a specific type we serve was requested
 
         out: List[Release] = []
         for rel in search_to_releases(res):
@@ -134,13 +116,3 @@ class MAssMediaProvider(MediaProvider):
             rel.match_confidence = score_release(rel, signals)
             out.append(rel)
         return out
-
-    def featured_media(self, lang: str = "en-us") -> List[Release]:
-        """Recently-played items from the server as curated/home content."""
-        if self.api is None:
-            return []
-        try:
-            return recently_played_to_releases(self.api.recently_played())
-        except Exception:
-            LOG.exception("Music Assistant recently-played fetch failed")
-            return []
