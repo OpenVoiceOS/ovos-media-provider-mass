@@ -2,15 +2,9 @@
 
 OVOS **MediaProvider** plugin for [Music Assistant](https://www.music-assistant.io/).
 
-It is the catalog/search half of the Music Assistant integration for the
-`ovos-media` stack: given a parsed media request it searches a Music Assistant
-server and returns ranked, playable `mediavocab.Release` objects. Playback of the
-returned `library://…` uris is handled by the companion
-[`ovos-media-plugin-mass`](https://github.com/OpenVoiceOS/ovos-media-plugin-mass)
-audio backend.
+It is the catalog/search half of the Music Assistant integration for the `ovos-media` stack. Given a parsed media request, it searches a Music Assistant server and returns ranked, playable `mediavocab.Release` objects.
 
-It supersedes the catalog/search half of the legacy OCP skill
-[`ovos-skill-music-assistant`](https://github.com/OpenVoiceOS/ovos-skill-music-assistant).
+Playback of the returned `library://…` uris is done by the companion [`ovos-media-plugin-mass`](https://github.com/OpenVoiceOS/ovos-media-plugin-mass) audio backend. This plugin supersedes the catalog/search half of the legacy OCP skill [`ovos-skill-music-assistant`](https://github.com/OpenVoiceOS/ovos-skill-music-assistant).
 
 ## Routing
 
@@ -32,7 +26,7 @@ pip install ovos-media-provider-mass
 > ```bash
 > pip install git+https://github.com/OpenVoiceOS/ovos-plugin-manager@feat/media-provider-plugin-type
 > ```
-> CI installs it the same way; `opm-check` is wired back once that support is released.
+> CI installs it the same way. `opm-check` is wired back once that support is released.
 
 ## Configure
 
@@ -55,14 +49,14 @@ the provider's entry-point name:
 
 ## Related projects
 
-- [py-music-assistant](https://github.com/TigreGotico/py-music-assistant) — shared HTTP client + mediavocab bridge (this provider's transport layer)
-- [ovos-media-plugin-mass](https://github.com/OpenVoiceOS/ovos-media-plugin-mass) — Music Assistant playback backend (plays the `library://` uris this provider returns)
-- [ovos-skill-music-assistant](https://github.com/OpenVoiceOS/ovos-skill-music-assistant) — the legacy OCP search skill this provider supersedes
+- [py-music-assistant](https://github.com/TigreGotico/py-music-assistant): shared HTTP client and mediavocab bridge (this provider's transport layer)
+- [ovos-media-plugin-mass](https://github.com/OpenVoiceOS/ovos-media-plugin-mass): Music Assistant playback backend (plays the `library://` uris this provider returns)
+- [ovos-skill-music-assistant](https://github.com/OpenVoiceOS/ovos-skill-music-assistant): the legacy OCP search skill this provider supersedes
 
 ## Docs
 
-- [docs/index.md](docs/index.md) — overview & how it fits the ovos-media stack
-- [docs/configuration.md](docs/configuration.md) — configuration reference
+- [docs/index.md](docs/index.md): overview and how it fits the ovos-media stack
+- [docs/configuration.md](docs/configuration.md): configuration reference
 
 ## Tests
 

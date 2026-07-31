@@ -18,7 +18,7 @@ utterance ─▶ OCP pipeline ─▶ provider.search(signals) ─▶ list[Releas
 
 The provider is loaded **in-process** by the OCP pipeline (no bus round-trip),
 gated by its three-axis routing, and its `search()` is called directly. It
-returns `mediavocab.Release` objects; the daemon hands the winning uri to the
+returns `mediavocab.Release` objects. The daemon hands the winning uri to the
 `ovos-media-plugin-mass` audio backend, which resolves and plays it.
 
 ## How it works
@@ -30,7 +30,7 @@ and its mediavocab bridge:
 1. `search(signals)` calls `SimpleHTTPMusicAssistantClient.search_media(signals.title)`.
 2. `search_to_releases(...)` maps the response buckets to `Release` objects.
 3. When `signals.medium` names a specific served type (`MUSIC`/`RADIO`/
-   `PODCAST`/`AUDIOBOOK`), results are narrowed to it; otherwise all are returned.
+   `PODCAST`/`AUDIOBOOK`), results are narrowed to it. Otherwise, all are returned.
 4. Each result's `match_confidence` is scored against the request
    (title similarity + favourite/artist bonuses).
 
