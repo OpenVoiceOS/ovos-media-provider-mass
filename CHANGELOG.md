@@ -1,5 +1,13 @@
 # Changelog
 
+## [0.0.1a3](https://github.com/OpenVoiceOS/ovos-media-provider-mass/tree/0.0.1a3) (2026-08-02)
+
+[Full Changelog](https://github.com/OpenVoiceOS/ovos-media-provider-mass/compare/0.0.1a2...0.0.1a3)
+
+**Merged pull requests:**
+
+- chore: remove duplicate publish-alpha workflow [\#4](https://github.com/OpenVoiceOS/ovos-media-provider-mass/pull/4) ([JarbasAl](https://github.com/JarbasAl))
+
 ## [0.0.1a2](https://github.com/OpenVoiceOS/ovos-media-provider-mass/tree/0.0.1a2) (2026-07-31)
 
 [Full Changelog](https://github.com/OpenVoiceOS/ovos-media-provider-mass/compare/ab576a77069fcb79c84a99aa3f1476318ea6a5e2...0.0.1a2)
