@@ -9,25 +9,25 @@ description = "OVOS MediaProvider plugin for Music Assistant (replaces ovos-skil
 readme = "README.md"
 license = { text = "Apache-2.0" }
 authors = [{ name = "JarbasAI", email = "jarbasai@mailfence.com" }]
-requires-python = ">=3.10"
+requires-python = ">=3.12"
 keywords = ["ovos", "OpenVoiceOS", "OCP", "media", "music", "music-assistant", "MediaProvider"]
 classifiers = [
     "Development Status :: 3 - Alpha",
     "Intended Audience :: Developers",
     "License :: OSI Approved :: Apache Software License",
-    "Programming Language :: Python :: 3.10",
-    "Programming Language :: Python :: 3.11",
     "Programming Language :: Python :: 3.12",
     "Programming Language :: Python :: 3.13",
 ]
 dependencies = [
     "mediavocab>=1.0.0",
-    "ovos-plugin-manager>=2.1.0,<3.0.0",
+    "ovos-plugin-manager>=2.8.0a1,<3.0.0,<3.0.0",
     "py-music-assistant>=0.0.1",
 ]
 
 [project.optional-dependencies]
-test = ["pytest", "pytest-cov"]
+# ovoscope brings MediaProviderHarness; CI installs it from git (see the
+# pre_install_pip note in the workflows) until the new alpha publishes to PyPI.
+test = ["pytest", "pytest-cov", "ovoscope>=0.20.0a1"]
 
 [project.urls]
 Homepage = "https://github.com/OpenVoiceOS/ovos-media-provider-mass"
