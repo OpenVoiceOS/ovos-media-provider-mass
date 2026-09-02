@@ -20,13 +20,7 @@ Playback of the returned `library://…` uris is done by the companion [`ovos-me
 pip install ovos-media-provider-mass
 ```
 
-> **Note (ovos-media sprint):** the `opm.media.provider` plugin type lives in
-> `ovos-plugin-manager`'s `feat/media-provider-plugin-type` branch and is not on
-> PyPI yet, so until it ships you need:
-> ```bash
-> pip install git+https://github.com/OpenVoiceOS/ovos-plugin-manager@feat/media-provider-plugin-type
-> ```
-> CI installs it the same way. `opm-check` is wired back once that support is released.
+The `opm.media.provider` plugin type is available in `ovos-plugin-manager` 2.11.6a1 and later.
 
 ## Configure
 
