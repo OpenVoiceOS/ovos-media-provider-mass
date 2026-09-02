@@ -38,13 +38,16 @@ the provider's entry-point name:
   "media_providers": {
     "music_assistant": {
       "url": "http://192.168.1.100:8095",
+      "token": "your-mass-api-token",
       "max_results": 10
     }
   }
 }
 ```
 
-`url` is required (the provider reports itself unavailable without it). Set
+`url` is required (the provider reports itself unavailable without it). `token`
+is required by Music Assistant 2.11+ (create one in the MA web UI under
+Settings → Users); older, unauthenticated servers keep working without it. Set
 `"enabled": false` to disable without uninstalling.
 
 ## Related projects

@@ -1,7 +1,7 @@
 """Tests for the Music Assistant MediaProvider plugin (network-free)."""
 import json
 from os.path import dirname, join
-from unittest.mock import MagicMock
+from unittest.mock import MagicMock, patch
 
 from mediavocab import MediaType, Release, Signals
 
@@ -33,6 +33,20 @@ def test_instantiation():
 def test_search_without_url_returns_empty():
     prov = MAssMediaProvider()
     assert prov.api is None
+
+
+def test_token_reaches_client_constructor():
+    prov = MAssMediaProvider({"url": "http://mass.local:8095", "token": "sekrit-token"})
+    with patch("ovos_media_provider_mass.SimpleHTTPMusicAssistantClient") as mock_client:
+        assert prov.api is mock_client.return_value
+    mock_client.assert_called_once_with("http://mass.local:8095", token="sekrit-token")
+
+
+def test_no_token_passes_none_to_client_constructor():
+    prov = MAssMediaProvider({"url": "http://mass.local:8095"})
+    with patch("ovos_media_provider_mass.SimpleHTTPMusicAssistantClient") as mock_client:
+        assert prov.api is mock_client.return_value
+    mock_client.assert_called_once_with("http://mass.local:8095", token=None)
     assert prov.search(Signals(title="worms")) == []
 
 
