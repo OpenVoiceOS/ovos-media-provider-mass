@@ -1,5 +1,13 @@
 # Changelog
 
+## [0.0.1a6](https://github.com/OpenVoiceOS/ovos-media-provider-mass/tree/0.0.1a6) (2026-09-16)
+
+[Full Changelog](https://github.com/OpenVoiceOS/ovos-media-provider-mass/compare/0.0.1a5...0.0.1a6)
+
+**Merged pull requests:**
+
+- feat: authenticate against Music Assistant with an API token [\#6](https://github.com/OpenVoiceOS/ovos-media-provider-mass/pull/6) ([JarbasAl](https://github.com/JarbasAl))
+
 ## [0.0.1a5](https://github.com/OpenVoiceOS/ovos-media-provider-mass/tree/0.0.1a5) (2026-09-02)
 
 [Full Changelog](https://github.com/OpenVoiceOS/ovos-media-provider-mass/compare/0.0.1a4...0.0.1a5)
