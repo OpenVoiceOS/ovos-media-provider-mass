@@ -71,6 +71,7 @@ class MAssMediaProvider(MediaProvider):
     def __init__(self, config: Optional[dict] = None):
         super().__init__(config)
         self.url: str = (self.config.get("url") or "").strip()
+        self.token: Optional[str] = self.config.get("token")
         self.max_results: int = int(self.config.get("max_results", 10))
         self._api: Optional[SimpleHTTPMusicAssistantClient] = None
 
@@ -80,7 +81,7 @@ class MAssMediaProvider(MediaProvider):
         if not self.url:
             return None
         if self._api is None:
-            self._api = SimpleHTTPMusicAssistantClient(self.url)
+            self._api = SimpleHTTPMusicAssistantClient(self.url, token=self.token)
         return self._api
 
     def search(self, signals: Signals, lang: str = "en-us", *,

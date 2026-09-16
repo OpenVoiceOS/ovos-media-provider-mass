@@ -18,6 +18,7 @@ through to the provider's `config` dict.
 | Key | Type | Default | Meaning |
 |---|---|---|---|
 | `url` | str | *(none)* | Music Assistant server base URL. **Required.** Without it, the provider reports itself unavailable and is skipped at load. |
+| `token` | str | *(none)* | Music Assistant API token; required by MA 2.11+, create one in the MA web UI under Settings → Users. Also settable via the `MASS_TOKEN` environment variable. |
 | `max_results` | int | `10` | Max results requested from the server per search. |
 | `enabled` | bool | `true` | Set `false` to disable the provider without uninstalling it (handled by the pipeline loader). |
 
